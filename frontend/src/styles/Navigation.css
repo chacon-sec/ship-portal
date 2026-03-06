@@ -1,0 +1,225 @@
+.navigation-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+@media (max-width: 1200px) {
+  .navigation-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.current-route,
+.reroute-section {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.current-route h3,
+.reroute-section h3 {
+  color: #00d4ff;
+  margin-top: 0;
+}
+
+.route-info {
+  background: rgba(0, 212, 255, 0.05);
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.route-info h4 {
+  color: #fff;
+  margin-top: 0;
+}
+
+.route-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.route-details p {
+  margin: 8px 0;
+  color: #aaa;
+}
+
+.route-details strong {
+  color: #fff;
+}
+
+.map-container {
+  margin: 20px 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.ship-map {
+  text-align: center;
+}
+
+.ship-map h3 {
+  color: #00d4ff;
+  margin: 10px 0;
+  font-size: 1em;
+}
+
+.reroute-form {
+  background: rgba(0, 212, 255, 0.05);
+  padding: 20px;
+  border-radius: 4px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  color: #00d4ff;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #00d4ff;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+  color: #666;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.waypoints-section {
+  margin: 20px 0;
+}
+
+.waypoints-section h4 {
+  color: #00d4ff;
+  margin-bottom: 15px;
+}
+
+.waypoint-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.waypoint-input input {
+  flex: 1;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #00aaff;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.waypoint-input input:focus {
+  outline: none;
+  border-color: #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.remove-btn {
+  background: #ff006e;
+  color: white;
+  border: none;
+  width: 40px;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.remove-btn:hover {
+  background: #d70055;
+}
+
+.add-waypoint-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px dashed #00ff00;
+  color: #00ff00;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.add-waypoint-btn:hover {
+  background: rgba(0, 255, 0, 0.2);
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.submit-btn,
+.cancel-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #00ff00 0%, #00aaff 100%);
+  color: #000;
+}
+
+.submit-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+.cancel-btn {
+  background: #333;
+  color: #fff;
+  border: 1px solid #666;
+}
+
+.cancel-btn:hover {
+  background: #444;
+}
+
+.reroute-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #00d4ff 0%, #00aaff 100%);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reroute-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}

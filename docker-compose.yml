@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # PostgreSQL for Keycloak
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ship-portal-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Keycloak IAM Server
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak-password
+      KC_PROXY: edge
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT: false
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ship-portal-network
+    command:
+      - "start-dev"
+
+  # Ship Portal Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      PORT: 5000
+      NODE_ENV: development
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: ship-portal
+      KEYCLOAK_CLIENT_ID: ship-portal-client
+      KEYCLOAK_CLIENT_SECRET: ship-portal-secret
+      SESSION_SECRET: your-session-secret-here
+    ports:
+      - "5000:5000"
+    depends_on:
+      - keycloak
+    networks:
+      - ship-portal-network
+    volumes:
+      - ./backend/src:/app/src
+    command: npm run dev
+
+  # Ship Portal Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - ship-portal-network
+    environment:
+      VITE_API_BASE_URL: http://localhost:5000
+
+volumes:
+  postgres_data:
+
+networks:
+  ship-portal-network:
+    driver: bridge

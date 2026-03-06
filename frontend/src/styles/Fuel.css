@@ -1,0 +1,218 @@
+.fuel-summary {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 170, 0, 0.3);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.fuel-summary h3 {
+  color: #ffaa00;
+  margin-top: 0;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.summary-item {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 4px;
+  border-left: 4px solid #ffaa00;
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-label {
+  color: #888;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+}
+
+.summary-value {
+  color: #fff;
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+.fuel-tanks {
+  margin: 40px 0;
+}
+
+.fuel-tanks h3 {
+  color: #ffaa00;
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+
+.tanks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.fuel-gauge {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 170, 0, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.fuel-gauge h4 {
+  color: #ffaa00;
+  margin: 0 0 15px 0;
+  font-size: 1.2em;
+}
+
+.gauge-container {
+  margin: 20px 0;
+}
+
+.gauge-info {
+  text-align: left;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 170, 0, 0.1);
+}
+
+.gauge-info p {
+  margin: 5px 0;
+  color: #aaa;
+  font-size: 0.9em;
+}
+
+.fuel-allocation {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 40px;
+}
+
+.fuel-allocation h3 {
+  color: #00d4ff;
+  margin-top: 0;
+}
+
+.allocation-form {
+  background: rgba(0, 212, 255, 0.05);
+  padding: 20px;
+  border-radius: 4px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  color: #00d4ff;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #00d4ff;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1em;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.form-group select {
+  cursor: pointer;
+}
+
+.form-group select option {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.submit-btn,
+.cancel-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #00ff00 0%, #00aaff 100%);
+  color: #000;
+}
+
+.submit-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+.cancel-btn {
+  background: #333;
+  color: #fff;
+  border: 1px solid #666;
+}
+
+.cancel-btn:hover {
+  background: #444;
+}
+
+.allocate-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #ffaa00 0%, #ff8800 100%);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.allocate-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tanks-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
