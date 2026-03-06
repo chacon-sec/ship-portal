@@ -64,7 +64,7 @@ router.post('/reroute', requireAuth, requireRole(['captain']), (req: Request, re
 // Get navigation diagnostics (First Officer and above)
 router.get('/diagnostics', requireAuth, requireRole(['captain', 'first_officer']), (req: Request, res: Response) => {
   res.json({
-    heading: 045,
+    heading: 0o45,
     speed: 18.5,
     windSpeed: 12.0,
     windDirection: 270,
