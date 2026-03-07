@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface FuelGaugeProps {
   current: number;
   capacity: number;

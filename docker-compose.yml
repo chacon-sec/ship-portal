@@ -52,11 +52,16 @@ services:
     environment:
       PORT: 5000
       NODE_ENV: development
+      # internal URL used by backend (service name in Docker network)
       KEYCLOAK_URL: http://keycloak:8080
+      # address the browser should hit; leave localhost so redirect is reachable
+      PUBLIC_KEYCLOAK_URL: http://localhost:8080
       KEYCLOAK_REALM: ship-portal
       KEYCLOAK_CLIENT_ID: ship-portal-client
       KEYCLOAK_CLIENT_SECRET: ship-portal-secret
       SESSION_SECRET: your-session-secret-here
+      # where to send users after successful login
+      FRONTEND_URL: http://localhost:3000
     ports:
       - "5000:5000"
     depends_on:
@@ -79,6 +84,7 @@ services:
     networks:
       - ship-portal-network
     environment:
+      # frontend code should call the backend via the host port so browser can reach it
       VITE_API_BASE_URL: http://localhost:5000
 
 volumes:

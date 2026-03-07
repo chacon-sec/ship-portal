@@ -1,20 +1,34 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useApi } from '../hooks/useApi';
-import { StatusPanel } from '../components/StatusPanel';
 import '../styles/Dashboard.css';
 
 interface ShipStatus {
-  navigation: { status: string; eta: string };
-  fuel: { percentage: number; hoursRemaining: number };
-  diagnostics: { overallStatus: string };
+  navigation?: { status: string; eta: string };
+  fuel?: { percentage: number; hoursRemaining: number };
+  diagnostics?: { overallStatus: string };
+  eta?: string;
+}
+
+interface FuelResponse {
+  summary?: {
+    percentageFull?: number;
+    hoursRemaining?: number;
+  };
+}
+
+interface DiagnosticsResponse {
+  engine?: Record<string, { status?: 'operational' | 'warning' | 'critical' }>;
+  hull?: Record<string, { status?: 'operational' | 'warning' | 'critical' }>;
+  electrical?: Record<string, { status?: 'operational' | 'warning' | 'critical' }>;
 }
 
 export default function Dashboard() {
   const { user, logout, hasRole } = useAuth();
-  const { data: shipStatus, request: fetchStatus, isLoading, error } = useApi<ShipStatus>();
-  const navigate = useNavigate();
+  const { data: navigationData, request: fetchNavigation, isLoading: isNavigationLoading, error: navigationError } = useApi<ShipStatus>();
+  const { data: fuelData, request: fetchFuel, isLoading: isFuelLoading, error: fuelError } = useApi<FuelResponse>();
+  const { data: diagnosticsData, request: fetchDiagnostics, isLoading: isDiagnosticsLoading, error: diagnosticsError } = useApi<DiagnosticsResponse>();
   const [greeting, setGreeting] = useState('');
 
   useEffect(() => {
@@ -27,12 +41,31 @@ export default function Dashboard() {
   }, []);
 
   const loadShipStatus = async () => {
-    try {
-      await fetchStatus('/api/navigation');
-    } catch {
-      // Handle error silently - will show in UI
-    }
+    await Promise.allSettled([
+      fetchNavigation('/api/navigation'),
+      fetchFuel('/api/fuel'),
+      fetchDiagnostics('/api/diagnostics'),
+    ]);
   };
+
+  const navigationEta = navigationData?.navigation?.eta || navigationData?.eta || 'Unknown';
+  const fuelPercentage = fuelData?.summary?.percentageFull ?? 0;
+  const fuelHoursRemaining = fuelData?.summary?.hoursRemaining;
+  const diagnosticStatuses = [
+    ...Object.values(diagnosticsData?.engine || {}),
+    ...Object.values(diagnosticsData?.hull || {}),
+    ...Object.values(diagnosticsData?.electrical || {}),
+  ].map((metric) => metric?.status);
+
+  const diagnosticsStatus = diagnosticStatuses.includes('critical')
+    ? 'CRITICAL'
+    : diagnosticStatuses.includes('warning')
+      ? 'WARNING'
+      : diagnosticStatuses.length > 0
+        ? 'OPERATIONAL'
+        : 'Unknown';
+  const isLoading = isNavigationLoading || isFuelLoading || isDiagnosticsLoading;
+  const error = navigationError || fuelError || diagnosticsError;
 
   return (
     <div className="container">
@@ -61,7 +94,7 @@ export default function Dashboard() {
           <div className="intro-card">
             <h3>Welcome to Your Ship</h3>
             <p>
-              You have been assigned the following role(s): <strong>{user?.roles.join(', ')}</strong>
+              You have been assigned the following role(s): <strong>{user?.roles?.join(', ') || 'none'}</strong>
             </p>
             <p>
               Access to ship controls and information is based on your role. Use the navigation menu
@@ -119,26 +152,26 @@ export default function Dashboard() {
                 <strong>Status:</strong>{' '}
                 <span className={`status-badge operational`}>Active</span>
               </p>
-              {shipStatus?.navigation && <p><strong>ETA:</strong> {shipStatus.navigation.eta}</p>}
+              <p><strong>ETA:</strong> {navigationEta}</p>
             </div>
             <div className="status-box">
               <h4>Fuel Reserves</h4>
               <p>
                 <strong>Level:</strong>{' '}
-                <span className={`fuel-level ${shipStatus && shipStatus.fuel.percentage > 50 ? 'good' : 'warning'}`}>
-                  {shipStatus ? Math.round(shipStatus.fuel.percentage) : 0}%
+                <span className={`fuel-level ${fuelPercentage > 50 ? 'good' : 'warning'}`}>
+                  {Math.round(fuelPercentage)}%
                 </span>
               </p>
-              {shipStatus?.fuel && (
-                <p><strong>Hours Remaining:</strong> {Math.round(shipStatus.fuel.hoursRemaining * 10) / 10}</p>
+              {typeof fuelHoursRemaining === 'number' && (
+                <p><strong>Hours Remaining:</strong> {Math.round(fuelHoursRemaining * 10) / 10}</p>
               )}
             </div>
             <div className="status-box">
               <h4>Ship Diagnostics</h4>
               <p>
                 <strong>Status:</strong>{' '}
-                <span className={`status-badge ${shipStatus?.diagnostics.overallStatus === 'OPERATIONAL' ? 'operational' : 'warning'}`}>
-                  {shipStatus?.diagnostics.overallStatus || 'Unknown'}
+                <span className={`status-badge ${diagnosticsStatus === 'OPERATIONAL' ? 'operational' : 'warning'}`}>
+                  {diagnosticsStatus}
                 </span>
               </p>
             </div>

@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface StatusItem {
   name: string;
   status: 'operational' | 'warning' | 'critical';

@@ -12,7 +12,14 @@
     "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "typeRoots": ["./node_modules/@types", "./src/types"]
+    },
+    "skipIgnore": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

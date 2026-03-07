@@ -19,3 +19,4 @@ yarn-error.log*
 out/
 postgres_data/
 docker-compose.override.yml
+tmpclaude*

@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface PermissionErrorProps {
   title?: string;
   message?: string;

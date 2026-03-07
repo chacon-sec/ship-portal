@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get('/api/user', { withCredentials: true });
+      const response = await axios.get(`${apiBase}/api/user`, { withCredentials: true });
       setUser(response.data);
     } catch (error) {
       setUser(null);
@@ -39,16 +39,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // compute base url at runtime if variable is missing (helps container builds)
+  // Vite exposes env vars via import.meta.env
+  const apiBase =
+    import.meta.env.VITE_API_BASE_URL ||
+    `http://${window.location.hostname}:5000`;
+
   const login = () => {
-    window.location.href = '/auth/login';
+    // navigate directly to backend so we don't hit the SPA router or dev server
+    window.location.href = `${apiBase}/auth/login`;
   };
 
   const logout = () => {
-    window.location.href = '/auth/logout';
+    window.location.href = `${apiBase}/auth/logout`;
   };
 
   const hasRole = (role: string) => {
-    return user?.roles.includes(role) || false;
+    return (user?.roles ?? []).includes(role);
   };
 
   return (

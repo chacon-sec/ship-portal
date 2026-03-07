@@ -75,18 +75,39 @@ docker-compose logs
 4. Click **"Next"**
 5. On "Capability config" page, make sure **"Standard flow enabled"** is ON
 6. Click **"Save"**
-7. Go to the **"Valid Redirect URIs"** section and add:
-   - `http://localhost:3000/*`
+7. Go to the **"Valid Redirect URIs"** section and add both of the following URLs:
+   - `http://localhost:3000/*`  _(frontend SPA, enables wildcard matching)_
+   - `http://localhost:5000/auth/callback`  _(backend callback used by passport)_
+   > **Tip:** you can also enter `http://localhost:5000/*` if you prefer a wildcard for the backend.
 8. Click **"Save"** at the bottom
 
 ### Create Roles
 
-1. In the left menu, go to **"Roles"**
-2. Create these roles by clicking **"Create role"** for each:
+1. In the left menu, go to **"Roles"** (this creates **realm roles** – not client roles).
+2. Click **"Create role"** and add the following realm roles:
    - `captain`
    - `first_officer`
    - `engineer`
    - `crew_member`
+
+> ⚠️ Make sure you add the roles at the **realm level** (not under the client) so they
+> appear in the token's `realm_access.roles`. The backend code reads both realm and
+> client roles but primary examples use realm roles.
+
+#### Include roles in the ID token
+Keycloak does **not** include realm roles in the token by default. After you create the
+roles, open the **ship-portal-client** configuration and go to the **Mappers** tab.
+Add a mapper with these settings:
+
+- **Name:** `realm roles`
+- **Mapper Type:** `User Realm Role`
+- **Token Claim Name:** `realm_access.roles` (default)
+- **Claim JSON Type:** `String`
+- **Add to ID token:** ON
+- **Add to access token:** ON
+
+Save the mapper.  Now tokens issued to the client will contain a `realm_access.roles`
+array, and the backend’s verify callback will pick up the roles automatically.
 
 ### Create Test Users
 

@@ -1,3 +1,5 @@
+/// <reference path="./types/passport-openidconnect.d.ts" />
+/// <reference path="./types/express.d.ts" />
 import express, { Request, Response } from 'express';
 import session from 'express-session';
 import passport from 'passport';
@@ -59,6 +61,15 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok' });
 });
 
+// root path - helpful when someone hits the backend directly
+app.get('/', (req: Request, res: Response) => {
+  // the backend doesn't serve the SPA; redirect to the frontend if possible
+  const frontend = process.env.FRONTEND_URL || 'http://localhost:3000';
+  res
+    .status(302)
+    .send(`This service is the API backend. Navigate to ${frontend} for the frontend.`);
+});
+
 // User info endpoint (authenticated)
 app.get('/api/user', (req: Request, res: Response) => {
   if (!req.user) {
@@ -68,9 +79,9 @@ app.get('/api/user', (req: Request, res: Response) => {
 });
 
 // Error handling
-app.use((err: any, req: Request, res: Response) => {
-  console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
+app.use((err: any, req: Request, res: Response, next: any) => {
+  console.error('Unhandled error', err.stack || err);
+  res.status(500).json({ error: 'Internal server error', message: err.message });
 });
 
 app.listen(PORT, () => {
