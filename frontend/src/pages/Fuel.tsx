@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useApi } from '../hooks/useApi';
 import { FuelGauge } from '../components/FuelGauge';
+import { PermissionError } from '../components/PermissionError';
 import '../styles/Fuel.css';
 
 interface FuelTank {
@@ -26,6 +27,7 @@ interface FuelData {
 
 export default function Fuel() {
   const { user, logout, hasRole } = useAuth();
+  const canAccessFuel = hasRole('captain') || hasRole('first_officer') || hasRole('engineer');
   const { data: fuelData, request: fetchFuel, post: allocateFuel, isLoading, error } = useApi<FuelData>();
   const [fromTankId, setFromTankId] = useState('');
   const [toTankId, setToTankId] = useState('');
@@ -67,15 +69,45 @@ export default function Fuel() {
     }
   };
 
+  if (!canAccessFuel) {
+    return (
+      <div className="container">
+        <div className="nav-header">
+          <h1 className="nav-title">⚓ Ship Navigation Portal</h1>
+          <nav className="nav-menu">
+            <Link to="/dashboard">Dashboard</Link>
+            {(hasRole('captain') || hasRole('first_officer')) && <Link to="/navigation">Navigation</Link>}
+            {(hasRole('captain') || hasRole('first_officer') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
+            {(hasRole('captain') || hasRole('engineer') || hasRole('crew_member')) && <Link to="/diagnostics">Diagnostics</Link>}
+            <Link to="/operations">Operations</Link>
+          </nav>
+          <div className="user-info">
+            <span className="user-name">{user?.username}</span>
+            <button className="logout-btn" onClick={logout}>
+              Logout
+            </button>
+          </div>
+        </div>
+        <div className="page-content">
+          <PermissionError
+            title="Fuel Management Restricted"
+            message="You are not captain, first_officer, or engineer role and access denied"
+            requiredRoles={['captain', 'first_officer', 'engineer']}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       <div className="nav-header">
         <h1 className="nav-title">⚓ Ship Navigation Portal</h1>
         <nav className="nav-menu">
           <Link to="/dashboard">Dashboard</Link>
-          {hasRole('captain') && <Link to="/navigation">Navigation</Link>}
-          {(hasRole('captain') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
-          {(hasRole('captain') || hasRole('engineer')) && <Link to="/diagnostics">Diagnostics</Link>}
+          {(hasRole('captain') || hasRole('first_officer')) && <Link to="/navigation">Navigation</Link>}
+          {(hasRole('captain') || hasRole('first_officer') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
+          {(hasRole('captain') || hasRole('engineer') || hasRole('crew_member')) && <Link to="/diagnostics">Diagnostics</Link>}
           <Link to="/operations">Operations</Link>
         </nav>
         <div className="user-info">

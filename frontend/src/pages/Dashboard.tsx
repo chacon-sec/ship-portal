@@ -73,9 +73,9 @@ export default function Dashboard() {
         <h1 className="nav-title">⚓ Ship Navigation Portal</h1>
         <nav className="nav-menu">
           <Link to="/dashboard">Dashboard</Link>
-          {hasRole('captain') && <Link to="/navigation">Navigation</Link>}
-          {(hasRole('captain') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
-          {(hasRole('captain') || hasRole('engineer')) && <Link to="/diagnostics">Diagnostics</Link>}
+          {(hasRole('captain') || hasRole('first_officer')) && <Link to="/navigation">Navigation</Link>}
+          {(hasRole('captain') || hasRole('first_officer') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
+          {(hasRole('captain') || hasRole('engineer') || hasRole('crew_member')) && <Link to="/diagnostics">Diagnostics</Link>}
           <Link to="/operations">Operations</Link>
         </nav>
         <div className="user-info">
@@ -107,27 +107,39 @@ export default function Dashboard() {
         <div className="dashboard-sections">
           <h3>Available Controls</h3>
           <div className="controls-grid">
-            {hasRole('captain') && (
+            {(hasRole('captain') || hasRole('first_officer')) && (
               <Link to="/navigation" className="control-card navigation">
                 <div className="card-icon">🗺️</div>
                 <h4>Navigation</h4>
-                <p>Control ship routing and set waypoints</p>
+                <p>
+                  {hasRole('captain')
+                    ? 'Control ship routing and set waypoints'
+                    : 'View route status, navigation diagnostics, and crew assignments'}
+                </p>
               </Link>
             )}
 
-            {(hasRole('captain') || hasRole('engineer')) && (
+            {(hasRole('captain') || hasRole('first_officer') || hasRole('engineer')) && (
               <Link to="/fuel" className="control-card fuel">
                 <div className="card-icon">⛽</div>
                 <h4>Fuel Management</h4>
-                <p>Monitor and allocate fuel reserves</p>
+                <p>
+                  {hasRole('first_officer') && !hasRole('captain') && !hasRole('engineer')
+                    ? 'Monitor fuel and request reallocation between tanks'
+                    : 'Monitor and allocate fuel reserves'}
+                </p>
               </Link>
             )}
 
-            {(hasRole('captain') || hasRole('engineer')) && (
+            {(hasRole('captain') || hasRole('engineer') || hasRole('crew_member')) && (
               <Link to="/diagnostics" className="control-card diagnostics">
                 <div className="card-icon">📊</div>
                 <h4>Ship Diagnostics</h4>
-                <p>View system status and alerts</p>
+                <p>
+                  {hasRole('crew_member') && !hasRole('captain') && !hasRole('engineer')
+                    ? 'View assigned diagnostics (read-only)'
+                    : 'View system status and alerts'}
+                </p>
               </Link>
             )}
 
@@ -137,7 +149,7 @@ export default function Dashboard() {
               <p>Execute role-based tasks and see restricted actions</p>
             </Link>
 
-            {!hasRole('captain') && !hasRole('engineer') && (
+            {!hasRole('captain') && !hasRole('first_officer') && !hasRole('engineer') && !hasRole('crew_member') && (
               <div className="control-card disabled">
                 <div className="card-icon">🔒</div>
                 <h4>Limited Access</h4>

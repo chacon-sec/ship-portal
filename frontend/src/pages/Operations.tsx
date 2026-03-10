@@ -80,9 +80,9 @@ export default function Operations() {
         <h1 className="nav-title">⚓ Ship Navigation Portal</h1>
         <nav className="nav-menu">
           <Link to="/dashboard">Dashboard</Link>
-          {hasRole('captain') && <Link to="/navigation">Navigation</Link>}
-          {(hasRole('captain') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
-          {(hasRole('captain') || hasRole('engineer')) && <Link to="/diagnostics">Diagnostics</Link>}
+          {(hasRole('captain') || hasRole('first_officer')) && <Link to="/navigation">Navigation</Link>}
+          {(hasRole('captain') || hasRole('first_officer') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
+          {(hasRole('captain') || hasRole('engineer') || hasRole('crew_member')) && <Link to="/diagnostics">Diagnostics</Link>}
           <Link to="/operations">Operations</Link>
         </nav>
         <div className="user-info">

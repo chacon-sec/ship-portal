@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useApi } from '../hooks/useApi';
 import { StatusPanel } from '../components/StatusPanel';
+import { PermissionError } from '../components/PermissionError';
 import '../styles/Diagnostics.css';
 
 interface SystemStatus {
@@ -31,12 +32,16 @@ interface Alert {
 
 export default function Diagnostics() {
   const { user, logout, hasRole } = useAuth();
+  const canAccessDiagnostics = hasRole('captain') || hasRole('engineer') || hasRole('crew_member');
   const { data: diagnostics, request: fetchDiagnostics, isLoading, error } = useApi<Diagnostics>();
   const { data: alerts, request: fetchAlerts } = useApi<Alert[]>();
+  const canViewAlerts = hasRole('captain') || hasRole('engineer');
 
   useEffect(() => {
     loadDiagnostics();
-    loadAlerts();
+    if (canViewAlerts) {
+      loadAlerts();
+    }
   }, []);
 
   const loadDiagnostics = async () => {
@@ -64,15 +69,46 @@ export default function Diagnostics() {
     }));
   };
 
+  if (!canAccessDiagnostics) {
+    return (
+      <div className="container">
+        <div className="nav-header">
+          <h1 className="nav-title">⚓ Ship Navigation Portal</h1>
+          <nav className="nav-menu">
+            <Link to="/dashboard">Dashboard</Link>
+            {(hasRole('captain') || hasRole('first_officer')) && <Link to="/navigation">Navigation</Link>}
+            {(hasRole('captain') || hasRole('first_officer') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
+            {(hasRole('captain') || hasRole('engineer') || hasRole('crew_member')) && <Link to="/diagnostics">Diagnostics</Link>}
+            <Link to="/operations">Operations</Link>
+          </nav>
+          <div className="user-info">
+            <span className="user-name">{user?.username}</span>
+            <button className="logout-btn" onClick={logout}>
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <div className="page-content">
+          <PermissionError
+            title="Diagnostics Access Restricted"
+            message="You are not captain, engineer, or crew_member role and access denied"
+            requiredRoles={['captain', 'engineer', 'crew_member']}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       <div className="nav-header">
         <h1 className="nav-title">⚓ Ship Navigation Portal</h1>
         <nav className="nav-menu">
           <Link to="/dashboard">Dashboard</Link>
-          {hasRole('captain') && <Link to="/navigation">Navigation</Link>}
-          {(hasRole('captain') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
-          {(hasRole('captain') || hasRole('engineer')) && <Link to="/diagnostics">Diagnostics</Link>}
+          {(hasRole('captain') || hasRole('first_officer')) && <Link to="/navigation">Navigation</Link>}
+          {(hasRole('captain') || hasRole('first_officer') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
+          {(hasRole('captain') || hasRole('engineer') || hasRole('crew_member')) && <Link to="/diagnostics">Diagnostics</Link>}
           <Link to="/operations">Operations</Link>
         </nav>
         <div className="user-info">
@@ -111,7 +147,9 @@ export default function Diagnostics() {
 
             <div className="alerts-section">
               <h3>Alert History</h3>
-              {alerts && alerts.length > 0 ? (
+              {!canViewAlerts ? (
+                <p className="no-alerts">You are not captain or engineer role and access denied</p>
+              ) : alerts && alerts.length > 0 ? (
                 <div className="alerts-list">
                   {alerts.map((alert) => (
                     <div key={alert.id} className="alert-item">

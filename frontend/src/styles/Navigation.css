@@ -169,6 +169,27 @@
   background: rgba(0, 255, 0, 0.2);
 }
 
+.crew-assignment-list {
+  display: grid;
+  gap: 10px;
+}
+
+.crew-assignment-item {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 4px;
+  background: rgba(0, 212, 255, 0.08);
+  color: #ddd;
+}
+
+@media (max-width: 900px) {
+  .crew-assignment-item {
+    grid-template-columns: 1fr;
+  }
+}
+
 .form-actions {
   display: flex;
   gap: 10px;

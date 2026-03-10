@@ -13,6 +13,14 @@ interface Route {
   status: 'active' | 'planned' | 'completed';
 }
 
+interface CrewAssignment {
+  id: string;
+  name: string;
+  role: string;
+  station: string;
+  shift: string;
+}
+
 let shipRoute: Route = {
   id: '1',
   name: 'Current Route to Port A',
@@ -24,6 +32,13 @@ let shipRoute: Route = {
   eta: '14:30 UTC',
   status: 'active',
 };
+
+const crewAssignments: CrewAssignment[] = [
+  { id: 'c1', name: 'M. Rivera', role: 'Helm', station: 'Bridge', shift: '00:00-04:00' },
+  { id: 'c2', name: 'A. Patel', role: 'Radar', station: 'Bridge', shift: '04:00-08:00' },
+  { id: 'c3', name: 'J. Kim', role: 'Deck Lead', station: 'Fore Deck', shift: '08:00-12:00' },
+  { id: 'c4', name: 'L. Novak', role: 'Comms', station: 'Bridge', shift: '12:00-16:00' },
+];
 
 // Get current ship route (all authenticated users)
 router.get('/', requireAuth, (req: Request, res: Response) => {
@@ -71,6 +86,11 @@ router.get('/diagnostics', requireAuth, requireRole(['captain', 'first_officer']
     visibility: 15000,
     seaState: 'moderate',
   });
+});
+
+// Get crew assignments (First Officer and Captain)
+router.get('/crew-assignments', requireAuth, requireRole(['captain', 'first_officer']), (req: Request, res: Response) => {
+  res.json({ assignments: crewAssignments });
 });
 
 // Helper functions

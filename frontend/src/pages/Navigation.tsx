@@ -15,12 +15,37 @@ interface Route {
   status: 'active' | 'planned' | 'completed';
 }
 
+interface NavigationDiagnostics {
+  heading: number;
+  speed: number;
+  windSpeed: number;
+  windDirection: number;
+  visibility: number;
+  seaState: string;
+}
+
+interface CrewAssignment {
+  id: string;
+  name: string;
+  role: string;
+  station: string;
+  shift: string;
+}
+
+interface CrewAssignmentsResponse {
+  assignments: CrewAssignment[];
+}
+
 export default function Navigation() {
   const { user, logout, hasRole } = useAuth();
   const { data: currentRoute, request: fetchRoute, post: updateRoute, isLoading, error } = useApi<Route>();
+  const { data: diagnosticsData, request: fetchDiagnostics } = useApi<NavigationDiagnostics>();
+  const { data: crewData, request: fetchCrewAssignments } = useApi<CrewAssignmentsResponse>();
   const [newRouteName, setNewRouteName] = useState('');
   const [newWaypoints, setNewWaypoints] = useState<{ lat: number; lng: number }[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const canViewNavigation = hasRole('captain') || hasRole('first_officer');
+  const canReroute = hasRole('captain');
 
   useEffect(() => {
     loadRoute();
@@ -28,7 +53,11 @@ export default function Navigation() {
 
   const loadRoute = async () => {
     try {
-      await fetchRoute('/api/navigation');
+      await Promise.allSettled([
+        fetchRoute('/api/navigation'),
+        fetchDiagnostics('/api/navigation/diagnostics'),
+        fetchCrewAssignments('/api/navigation/crew-assignments'),
+      ]);
     } catch {
       // Handle error silently
     }
@@ -69,15 +98,15 @@ export default function Navigation() {
     }
   };
 
-  if (!hasRole('captain')) {
+  if (!canViewNavigation) {
     return (
       <div className="container">
         <div className="nav-header">
           <h1 className="nav-title">⚓ Ship Navigation Portal</h1>
           <nav className="nav-menu">
             <Link to="/dashboard">Dashboard</Link>
-            {hasRole('captain') && <Link to="/navigation">Navigation</Link>}
-            {(hasRole('captain') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
+            {(hasRole('captain') || hasRole('first_officer')) && <Link to="/navigation">Navigation</Link>}
+            {(hasRole('captain') || hasRole('first_officer') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
             {(hasRole('captain') || hasRole('engineer')) && <Link to="/diagnostics">Diagnostics</Link>}
             <Link to="/operations">Operations</Link>
           </nav>
@@ -91,8 +120,8 @@ export default function Navigation() {
         <div className="page-content">
           <PermissionError
             title="Navigation Control Restricted"
-            message="You are not captain role and access denied"
-            requiredRoles={['captain']}
+            message="You are not captain or first_officer role and access denied"
+            requiredRoles={['captain', 'first_officer']}
           />
         </div>
       </div>
@@ -105,8 +134,8 @@ export default function Navigation() {
         <h1 className="nav-title">⚓ Ship Navigation Portal</h1>
         <nav className="nav-menu">
           <Link to="/dashboard">Dashboard</Link>
-          {hasRole('captain') && <Link to="/navigation">Navigation</Link>}
-          {(hasRole('captain') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
+          {(hasRole('captain') || hasRole('first_officer')) && <Link to="/navigation">Navigation</Link>}
+          {(hasRole('captain') || hasRole('first_officer') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
           {(hasRole('captain') || hasRole('engineer')) && <Link to="/diagnostics">Diagnostics</Link>}
           <Link to="/operations">Operations</Link>
         </nav>
@@ -159,8 +188,8 @@ export default function Navigation() {
           </div>
 
           <div className="reroute-section">
-            <h3>Reroute Ship</h3>
-            {showForm ? (
+            {canReroute ? <h3>Reroute Ship</h3> : <h3>Navigation Diagnostics</h3>}
+            {canReroute && showForm ? (
               <div className="reroute-form">
                 <div className="form-group">
                   <label htmlFor="route-name">Route Name:</label>
@@ -225,10 +254,42 @@ export default function Navigation() {
                   </button>
                 </div>
               </div>
-            ) : (
+            ) : canReroute ? (
               <button className="reroute-btn" onClick={() => setShowForm(true)}>
                 Initiate Reroute
               </button>
+            ) : (
+              <div className="reroute-form">
+                {diagnosticsData ? (
+                  <div className="route-details">
+                    <p><strong>Heading:</strong> {diagnosticsData.heading}°</p>
+                    <p><strong>Speed:</strong> {diagnosticsData.speed} kn</p>
+                    <p><strong>Wind:</strong> {diagnosticsData.windSpeed} kn @ {diagnosticsData.windDirection}°</p>
+                    <p><strong>Visibility:</strong> {diagnosticsData.visibility} m</p>
+                    <p><strong>Sea State:</strong> {diagnosticsData.seaState}</p>
+                  </div>
+                ) : (
+                  <p>Navigation diagnostics unavailable</p>
+                )}
+
+                <div className="waypoints-section">
+                  <h4>Crew Assignments</h4>
+                  {(crewData?.assignments || []).length === 0 ? (
+                    <p>No crew assignments found.</p>
+                  ) : (
+                    <div className="crew-assignment-list">
+                      {(crewData?.assignments || []).map((assignment) => (
+                        <div key={assignment.id} className="crew-assignment-item">
+                          <strong>{assignment.name}</strong>
+                          <span>{assignment.role}</span>
+                          <span>{assignment.station}</span>
+                          <span>{assignment.shift}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
           </div>
         </div>
