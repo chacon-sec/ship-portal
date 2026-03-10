@@ -76,6 +76,7 @@ export default function Dashboard() {
           {hasRole('captain') && <Link to="/navigation">Navigation</Link>}
           {(hasRole('captain') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
           {(hasRole('captain') || hasRole('engineer')) && <Link to="/diagnostics">Diagnostics</Link>}
+          <Link to="/operations">Operations</Link>
         </nav>
         <div className="user-info">
           <span className="user-name">{user?.username}</span>
@@ -129,6 +130,12 @@ export default function Dashboard() {
                 <p>View system status and alerts</p>
               </Link>
             )}
+
+            <Link to="/operations" className="control-card">
+              <div className="card-icon">🧭</div>
+              <h4>Role Operations</h4>
+              <p>Execute role-based tasks and see restricted actions</p>
+            </Link>
 
             {!hasRole('captain') && !hasRole('engineer') && (
               <div className="control-card disabled">

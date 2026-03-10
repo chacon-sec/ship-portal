@@ -62,8 +62,11 @@ router.get(
 // Logout endpoint
 router.get('/logout', (req: Request, res: Response) => {
   const keycloakURL = process.env.KEYCLOAK_URL || 'http://keycloak:8080';
+  const publicKeycloakURL =
+    process.env.PUBLIC_KEYCLOAK_URL ||
+    keycloakURL.replace('http://keycloak:8080', 'http://localhost:8080');
   const realm = process.env.KEYCLOAK_REALM || 'ship-portal';
-  const logoutURL = `${keycloakURL}/realms/${realm}/protocol/openid-connect/logout`;
+  const logoutURL = `${publicKeycloakURL}/realms/${realm}/protocol/openid-connect/logout`;
 
   req.logout((err) => {
     if (err) {

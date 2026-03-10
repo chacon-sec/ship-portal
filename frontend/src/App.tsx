@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Navigation from './pages/Navigation';
 import Fuel from './pages/Fuel';
 import Diagnostics from './pages/Diagnostics';
+import Operations from './pages/Operations';
 import Login from './pages/Login';
 import './App.css';
 
@@ -27,6 +28,7 @@ function AppContent() {
       <Route path="/navigation" element={isAuthenticated ? <Navigation /> : <Navigate to="/login" />} />
       <Route path="/fuel" element={isAuthenticated ? <Fuel /> : <Navigate to="/login" />} />
       <Route path="/diagnostics" element={isAuthenticated ? <Diagnostics /> : <Navigate to="/login" />} />
+      <Route path="/operations" element={isAuthenticated ? <Operations /> : <Navigate to="/login" />} />
     </Routes>
   );
 }

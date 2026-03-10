@@ -26,6 +26,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Check if user is already logged in
     fetchUser();
+
+    // Keep session roles in sync with backend updates from Keycloak.
+    const refreshIntervalMs = 15000;
+    const interval = window.setInterval(() => {
+      fetchUser();
+    }, refreshIntervalMs);
+
+    return () => {
+      window.clearInterval(interval);
+    };
   }, []);
 
   const fetchUser = async () => {

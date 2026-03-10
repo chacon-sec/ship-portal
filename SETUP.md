@@ -60,11 +60,29 @@ docker-compose logs
 
 ### Create the Ship Portal Realm
 
+**Why this step matters:**
+A **realm** is a security boundary in Keycloak. It contains its own users, roles,
+clients, sessions, and policies. Creating a dedicated `ship-portal` realm isolates
+this lab from any other apps or environments, which is important for safe testing
+and clean IAM demos.
+
 1. Click the realm dropdown (top left) → **"Create Realm"**
 2. Enter **Realm name**: `ship-portal`
 3. Click **"Create"**
 
 ### Register Client
+
+**Why this step matters:**
+In OAuth2/OIDC, a **client** represents an application that asks Keycloak to
+authenticate users and issue tokens. Here, `ship-portal-client` is the identity
+of this portal. Keycloak uses the client config to decide which login flows are
+allowed and where it can safely redirect users after authentication.
+
+**How it works in this lab:**
+- Frontend starts login by redirecting to backend auth route.
+- Backend starts OIDC flow with Keycloak for this client.
+- Keycloak sends the user back to an allowed redirect URI.
+- Backend exchanges code for tokens and builds user session.
 
 1. In the left menu, go to **"Clients"**
 2. Click **"Create client"**
@@ -83,6 +101,17 @@ docker-compose logs
 
 ### Create Roles
 
+**Why this step matters:**
+Roles are your authorization model. The app checks role claims to decide what each
+user can view or modify. Defining `captain`, `first_officer`, `engineer`, and
+`crew_member` gives you clear RBAC behavior to demonstrate in the UI and API.
+
+**How it works in this lab:**
+- Keycloak issues role claims in tokens.
+- Backend reads token claims and attaches roles to `req.user`.
+- Route middleware (`requireRole`) enforces access per endpoint.
+- Frontend also hides or shows UI based on user roles.
+
 1. In the left menu, go to **"Roles"** (this creates **realm roles** – not client roles).
 2. Click **"Create role"** and add the following realm roles:
    - `captain`
@@ -95,6 +124,16 @@ docker-compose logs
 > client roles but primary examples use realm roles.
 
 #### Include roles in the ID token
+**Why this step matters:**
+Authentication tells us **who** the user is. Authorization needs claims that show
+**what** the user can do. This mapper ensures roles are placed into token claims
+so the backend can enforce permissions consistently.
+
+**How it works:**
+When login completes, Keycloak issues tokens. With this mapper enabled, tokens
+include `realm_access.roles`. The backend reads that claim and stores role data in
+session for role checks across API requests.
+
 Keycloak does **not** include realm roles in the token by default. After you create the
 roles, open the **ship-portal-client** configuration and go to the **Mappers** tab.
 Add a mapper with these settings:
@@ -111,6 +150,10 @@ array, and the backend’s verify callback will pick up the roles automatically.
 
 ### Create Test Users
 
+**Why this step matters:**
+IAM behavior is easiest to understand when you can compare users with different
+permissions. Test users let you validate both allowed and denied paths.
+
 Now create users for different roles. For each user:
 
 1. Go to **"Users"** in left menu
@@ -125,12 +168,24 @@ Now create users for different roles. For each user:
 
 #### Set Password for User
 
+**Why this step matters:**
+Without credentials, users cannot complete authentication. Setting `Temporary` to
+OFF avoids forced password-update screens during demos, keeping the lab flow fast.
+
 1. Go to the **"Credentials"** tab
 2. Click **"Set password"**
 3. Enter a password and toggle **"Temporary"** to OFF
 4. Click **"Set password"** (you may get a confirmation prompt)
 
 #### Assign Roles to User
+
+**Why this step matters:**
+Users have no effective permissions until roles are assigned. This is the core IAM
+concept: identity (user account) plus authorization (role membership).
+
+**How it works in runtime:**
+After role assignment, new tokens include updated claims. The portal then uses those
+claims to allow or deny actions like navigation control or diagnostics updates.
 
 1. Go to the **"Role mapping"** tab
 2. Under **"Assign role"**, select the role you want to assign (e.g., `captain`)

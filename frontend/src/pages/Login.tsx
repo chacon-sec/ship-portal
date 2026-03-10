@@ -39,19 +39,45 @@ export default function Login() {
             <div className="role-list">
               <div className="role-item">
                 <span className="role-badge captain">Captain</span>
-                <p>Full access to all features</p>
+                <p>Full access to all features, including Operations tasks</p>
               </div>
               <div className="role-item">
                 <span className="role-badge first-officer">First Officer</span>
-                <p>Navigation and diagnostics viewing</p>
+                <p>Dashboard and Operations tasks for bridge watch</p>
               </div>
               <div className="role-item">
                 <span className="role-badge engineer">Engineer</span>
-                <p>Diagnostics and fuel management</p>
+                <p>Fuel, diagnostics, and engineering Operations tasks</p>
               </div>
               <div className="role-item">
                 <span className="role-badge crew">Crew Member</span>
-                <p>Read-only access to status</p>
+                <p>Dashboard and crew Operations tasks</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="login-access-map">
+            <h3>Role Access Paths</h3>
+            <div className="access-list">
+              <div className="access-item">
+                <h4>Captain</h4>
+                <p>/dashboard, /navigation, /fuel, /diagnostics, /operations</p>
+                <p className="denied-copy">If not captain: You are not captain role and access denied</p>
+              </div>
+              <div className="access-item">
+                <h4>First Officer</h4>
+                <p>/dashboard, /operations</p>
+                <p className="denied-copy">If not first_officer: You are not first_officer role and access denied</p>
+              </div>
+              <div className="access-item">
+                <h4>Engineer</h4>
+                <p>/dashboard, /fuel, /diagnostics, /operations</p>
+                <p className="denied-copy">If not engineer: You are not engineer role and access denied</p>
+              </div>
+              <div className="access-item">
+                <h4>Crew Member</h4>
+                <p>/dashboard, /operations</p>
+                <p className="denied-copy">If not crew_member: You are not crew_member role and access denied</p>
               </div>
             </div>
           </div>

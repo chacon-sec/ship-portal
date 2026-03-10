@@ -79,6 +79,7 @@ export default function Navigation() {
             {hasRole('captain') && <Link to="/navigation">Navigation</Link>}
             {(hasRole('captain') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
             {(hasRole('captain') || hasRole('engineer')) && <Link to="/diagnostics">Diagnostics</Link>}
+            <Link to="/operations">Operations</Link>
           </nav>
           <div className="user-info">
             <span className="user-name">{user?.username}</span>
@@ -90,7 +91,7 @@ export default function Navigation() {
         <div className="page-content">
           <PermissionError
             title="Navigation Control Restricted"
-            message="You do not have permission to control ship navigation."
+            message="You are not captain role and access denied"
             requiredRoles={['captain']}
           />
         </div>
@@ -107,6 +108,7 @@ export default function Navigation() {
           {hasRole('captain') && <Link to="/navigation">Navigation</Link>}
           {(hasRole('captain') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
           {(hasRole('captain') || hasRole('engineer')) && <Link to="/diagnostics">Diagnostics</Link>}
+          <Link to="/operations">Operations</Link>
         </nav>
         <div className="user-info">
           <span className="user-name">{user?.username}</span>

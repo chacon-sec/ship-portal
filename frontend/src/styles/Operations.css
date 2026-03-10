@@ -1,0 +1,98 @@
+.operations-subtitle {
+  color: #9dc4d4;
+  margin-top: 0;
+}
+
+.role-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.role-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0, 212, 255, 0.15);
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  color: #b8ebff;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.role-chip.muted {
+  background: rgba(170, 170, 170, 0.2);
+  border-color: rgba(170, 170, 170, 0.4);
+  color: #d0d0d0;
+}
+
+.operation-message {
+  background: rgba(0, 255, 128, 0.1);
+  border: 1px solid rgba(0, 255, 128, 0.35);
+  color: #8ff1c2;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+
+.operations-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.operations-card {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.operations-card h3 {
+  margin-top: 0;
+  color: #00d4ff;
+}
+
+.task-item {
+  padding: 12px;
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.task-item h4 {
+  margin: 0 0 8px;
+}
+
+.task-item p {
+  margin: 6px 0;
+}
+
+.task-item.locked {
+  border-color: rgba(255, 99, 71, 0.35);
+}
+
+.task-item.completed {
+  border-color: rgba(0, 255, 128, 0.35);
+}
+
+.required-role {
+  color: #a2dff1;
+  font-size: 0.9rem;
+}
+
+.denied-text {
+  color: #ff9f91;
+  font-weight: 600;
+}
+
+.timestamp {
+  color: #9ad0b0;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1100px) {
+  .operations-grid {
+    grid-template-columns: 1fr;
+  }
+}

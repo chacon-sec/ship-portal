@@ -110,6 +110,45 @@
   margin-top: 30px;
 }
 
+.login-access-map {
+  margin-top: 28px;
+  text-align: left;
+}
+
+.login-access-map h3 {
+  color: #00d4ff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.access-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.access-item {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 212, 255, 0.1);
+  border-radius: 6px;
+  padding: 14px;
+}
+
+.access-item h4 {
+  margin: 0 0 8px;
+  color: #d9f5ff;
+}
+
+.access-item p {
+  margin: 6px 0;
+  color: #b0b0b0;
+}
+
+.denied-copy {
+  color: #ff9f91;
+  font-size: 0.9em;
+}
+
 .login-roles h3 {
   color: #00d4ff;
   text-align: center;
@@ -174,6 +213,10 @@
   }
 
   .role-list {
+    grid-template-columns: 1fr;
+  }
+
+  .access-list {
     grid-template-columns: 1fr;
   }
 }

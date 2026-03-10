@@ -76,6 +76,7 @@ export default function Fuel() {
           {hasRole('captain') && <Link to="/navigation">Navigation</Link>}
           {(hasRole('captain') || hasRole('engineer')) && <Link to="/fuel">Fuel</Link>}
           {(hasRole('captain') || hasRole('engineer')) && <Link to="/diagnostics">Diagnostics</Link>}
+          <Link to="/operations">Operations</Link>
         </nav>
         <div className="user-info">
           <span className="user-name">{user?.username}</span>
